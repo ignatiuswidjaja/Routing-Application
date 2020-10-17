@@ -1,18 +1,11 @@
 package com.example.routing.controller;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@AllArgsConstructor
+@RestController
+@RequestMapping("/api/routing")
 public class RoutingController {
-  @Value("${spring.application.name}")
-  String appName;
-
-  @GetMapping("/")
-  public String homePage(Model model) {
-    model.addAttribute("appName", appName);
-    return "home";
-  }
 }
