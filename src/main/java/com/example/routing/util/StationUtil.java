@@ -2,12 +2,30 @@ package com.example.routing.util;
 
 import com.example.routing.model.Station;
 import com.example.routing.model.StationEntity;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.joda.time.DateTime;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StationUtil {
+  public static List<Station> convertStationEntities(List<StationEntity> stationEntities) {
+    List<Station> stations = new ArrayList<>();
+    for(StationEntity stationEntity : stationEntities) {
+      stations.add(convertStationEntity(stationEntity));
+    }
+    return stations;
+  }
+
+  public static List<StationEntity> convertStations(List<Station> stations) {
+    List<StationEntity> stationEntities = new ArrayList<>();
+    for(Station station : stations) {
+      stationEntities.add(convertStation(station));
+    }
+    return stationEntities;
+  }
+
   public static Station convertStationEntity(StationEntity stationEntity) {
     return Station.builder()
         .stationCode(stationEntity.getStationCode())
