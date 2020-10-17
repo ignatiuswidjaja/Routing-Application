@@ -36,10 +36,12 @@ public class StationConfigLoader {
 
       File file = new ClassPathResource(fileName).getFile();
       MappingIterator<Station> iterator = mapper.readerFor(Station.class).with(schema).readValues(file);
+      log.info("Loading station data from file to database...");
       while(iterator.hasNext()) {
         Station station = iterator.next();
         stationRepository.save(StationUtil.convertStation(station));
       }
+      log.info("Loading station data finished");
     } catch (Exception e) {
       log.error("Error while loading objects from CSV file: {}", fileName, e);
     }
