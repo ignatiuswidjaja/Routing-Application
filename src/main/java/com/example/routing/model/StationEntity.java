@@ -3,6 +3,7 @@ package com.example.routing.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import org.joda.time.DateTime;
 
 @Entity
 public class StationEntity {
@@ -12,6 +13,6 @@ public class StationEntity {
   @Column(nullable = false)
   private String stationName;
 
-  @Column
-  private DateTime
+  @Column(nullable = false)
+  private DateTime openingDate;
 }
