@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @AllArgsConstructor
 @Component
-public class StationConfigLoader {
+public class StationDataLoader {
   private final StationRepository stationRepository;
 
   @PostConstruct
