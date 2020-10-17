@@ -39,6 +39,10 @@ public class StationConfigLoader {
       log.info("Loading station data from file to database...");
       while(iterator.hasNext()) {
         Station station = iterator.next();
+        station = station.toBuilder()
+            .stationLine(station.getStationCode().replaceAll("[0-9]", ""))
+            .stationNumber(Integer.parseInt(station.getStationCode().replaceAll("[A-Z]", "")))
+            .build();
         stationRepository.save(StationUtil.convertStation(station));
       }
       log.info("Loading station data finished");

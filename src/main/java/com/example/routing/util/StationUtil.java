@@ -31,6 +31,8 @@ public final class StationUtil {
         .stationCode(stationEntity.getStationCode())
         .stationName(stationEntity.getStationName())
         .openingDate(new DateTime(stationEntity.getOpeningDate()))
+        .stationLine(stationEntity.getStationLine())
+        .stationNumber(stationEntity.getStationNumber())
         .build();
   }
 
@@ -39,6 +41,8 @@ public final class StationUtil {
         .stationCode(station.getStationCode())
         .stationName(station.getStationName())
         .openingDate(station.getOpeningDate().getMillis())
+        .stationLine(station.getStationLine())
+        .stationNumber(station.getStationNumber())
         .build();
   }
 }
