@@ -22,4 +22,10 @@ public class StationEntity {
 
   @Column(nullable = false)
   private long openingDate;
+
+  @Column(nullable = false)
+  private String stationLine;
+
+  @Column(nullable = false)
+  private int stationNumber;
 }

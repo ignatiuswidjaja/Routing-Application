@@ -18,7 +18,7 @@ public class TestStationConfigLoader {
 
   @Test
   public void testStationConfigLoader_stationsLoaded() {
-    StationConfigLoader stationConfigLoader = new StationConfigLoader(stationRepository);
+    StationDataLoader stationConfigLoader = new StationDataLoader(stationRepository);
     stationConfigLoader.loadStationsIntoH2Database("StationMap.csv");
 
     List<StationEntity> stationEntities = stationRepository.findAll();
@@ -28,7 +28,7 @@ public class TestStationConfigLoader {
 
   @Test
   public void testStationConfigLoader_exception() {
-    StationConfigLoader stationConfigLoader = new StationConfigLoader(stationRepository);
+    StationDataLoader stationConfigLoader = new StationDataLoader(stationRepository);
     stationConfigLoader.loadStationsIntoH2Database("asd.csv");
 
     List<StationEntity> stationEntities = stationRepository.findAll();

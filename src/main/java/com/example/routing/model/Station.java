@@ -9,11 +9,13 @@ import org.joda.time.DateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(builderClassName = "Builder")
+@Builder(builderClassName = "Builder", toBuilder = true)
 @Getter
 public class Station {
   private String stationCode;
   private String stationName;
   @JsonFormat(pattern = "d MMMM yyyy")
   private DateTime openingDate;
+  private String stationLine;
+  private int stationNumber;
 }
