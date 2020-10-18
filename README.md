@@ -6,4 +6,5 @@ Exercise project for Routing Application using Spring
 
 # Assumptions
 - minimum station number is 0
-- maximum number of stations in a line <= 50 (i.e maximum station number is 50) 
+- maximum number of stations in a line <= 50 (i.e maximum station number is 50)
+- for simplicity, time period is determined by the start time of the trip and won't change during the trip (e.g if a trip starts at 9AM weekday, it will consider the whole trip to be during peak hours, regardless of the trip duration) 

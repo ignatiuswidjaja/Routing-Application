@@ -1,6 +1,6 @@
 package com.example.routing.model.enums;
 
-public enum TravelTimeCategory {
+public enum TimePeriod {
   PEAK,
   NIGHT,
   OTHER

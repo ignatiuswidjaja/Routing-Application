@@ -33,7 +33,8 @@ public class RouteController {
         .destinationStationName(destinationStationName)
         .build();
 
-    return routeService.getShortestRoute(spec);
+    return null;
+//    return routeService.getShortestRoute(spec);
   }
 
   @GetMapping("/time")
@@ -48,6 +49,7 @@ public class RouteController {
         .departureDate(dateTime)
         .build();
 
-    return routeService.getShortestRouteWithTime(spec);
+    return null;
+//    return routeService.getShortestRouteWithTime(spec);
   }
 }

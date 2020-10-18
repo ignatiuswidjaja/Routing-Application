@@ -2,6 +2,7 @@ package com.example.routing.controller;
 
 import com.example.routing.model.Station;
 import com.example.routing.model.exception.StationCodeNotFoundException;
+import com.example.routing.model.exception.StationNameNotFoundException;
 import com.example.routing.service.StationService;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -27,11 +28,15 @@ public class StationController {
     if (station == null) {
       throw new StationCodeNotFoundException(stationCode);
     }
-    return stationService.getStationByStationCode(stationCode);
+    return station;
   }
 
   @GetMapping("/name/{stationName}")
   public List<Station> getStationsByStationName(@PathVariable String stationName) {
-    return stationService.getStationsByStationName(stationName);
+    List<Station> stations = stationService.getStationsByStationName(stationName);
+    if (stations.isEmpty()) {
+      throw new StationNameNotFoundException(stationName);
+    }
+    return stations;
   }
 }

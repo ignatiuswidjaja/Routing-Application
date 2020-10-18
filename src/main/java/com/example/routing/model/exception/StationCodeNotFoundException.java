@@ -1,11 +1,10 @@
 package com.example.routing.model.exception;
 
-public class StationCodeNotFoundException extends RuntimeException {
-  private final String stationCode;
+import lombok.AllArgsConstructor;
 
-  public StationCodeNotFoundException(String stationCode) {
-    this.stationCode = stationCode;
-  }
+@AllArgsConstructor
+public class StationCodeNotFoundException extends BaseNotFoundException {
+  private final String stationCode;
 
   @Override
   public String getMessage() {

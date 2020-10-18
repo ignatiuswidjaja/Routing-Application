@@ -1,6 +1,9 @@
 package com.example.routing.service.impl;
 
 import com.example.routing.model.Station;
+import com.example.routing.model.StationNode;
+import com.example.routing.model.exception.RouteNotFoundException;
+import com.example.routing.model.exception.StationNameNotFoundException;
 import com.example.routing.model.request.GetShortestRouteSpec;
 import com.example.routing.model.request.GetShortestRouteWithTimeSpec;
 import com.example.routing.service.RouteService;
@@ -9,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
@@ -27,35 +32,85 @@ public class RouteServiceImpl implements RouteService {
     this.stations = stationService.getAllStations();
     this.stationNetwork = new HashMap<>();
 
-    initStationNetwork();
-    System.out.println("asd");
+    initStations();
   }
 
   @Override
-  public List<String> getShortestRoute(GetShortestRouteSpec spec) {
-    return null;  // TODO impl
+  public List<Station> getShortestRoute(GetShortestRouteSpec spec) {
+    final String originStationName = spec.getOriginStationName();
+    final String destinationStationName = spec.getDestinationStationName();
+
+    // get origin and destination stations
+    List<Station> originStations = stationService.getStationsByStationName(originStationName);
+    List<Station> destinationStations = stationService.getStationsByStationName(destinationStationName);
+
+    // validate
+    if (originStations.isEmpty()) {
+      throw new StationNameNotFoundException(spec.getOriginStationName());
+    } else if (destinationStations.isEmpty()) {
+      throw new StationNameNotFoundException(spec.getDestinationStationName());
+    }
+
+    // init variable
+    Queue<StationNode> openSet = new PriorityQueue<>();
+    Map<String, StationNode> allNodes = new HashMap<>();
+
+    // put origin stations to open set
+    for (Station station : originStations) {
+      openSet.add(new StationNode(station));
+    }
+
+    // A* algorithm
+    while (!openSet.isEmpty()) {
+      // retrieve node from queue
+      StationNode node = openSet.poll();
+      Station current = node.getCurrent();
+
+      // check if we arrive at destination
+      if (current.getStationName().equals(destinationStationName)) {
+        // trace back the route
+        List<Station> route = new ArrayList<>();
+        while (node != null) {
+          route.add(node.getCurrent());
+          node = allNodes.get(node.getPrevious().getStationName());
+        }
+        return route;
+      }
+
+      // get adjacent stations
+      List<Station> adjacentStations = stationNetwork.get(node.getCurrent());
+      for (Station adjacentStation : adjacentStations) {
+        // check if it's already found
+
+        // if it's on a different line
+        int pathScore = 2;
+
+
+//        openSet.add(new StationNode(adjacentStation, node, 2));
+      }
+
+    }
+
+    throw new RouteNotFoundException(originStationName, destinationStationName);
   }
 
   @Override
-  public List<String> getShortestRouteWithTime(GetShortestRouteWithTimeSpec spec) {
-    return null;  // TODO impl
+  public List<Station> getShortestRouteWithTime(GetShortestRouteWithTimeSpec spec) {
+    return null;
   }
 
   //===================
   // PRIVATE FUNCTIONS
   //===================
-  private void initStationNetwork() {
+  private void initStations() {
     for (Station station : stations) {
-      List<Station> adjacentStations = new ArrayList<>();
+      final String stationLine = station.getStationLine();
 
       // find connected transit station
-      List<Station> transitStations = stationService.getStationsByStationName(station.getStationName())
+      List<Station> adjacentStations = stationService.getStationsByStationName(station.getStationName())
           .stream()
           .filter(transit -> !transit.getStationCode().equals(station.getStationCode()))
           .collect(Collectors.toList());
-      adjacentStations.addAll(transitStations);
-
-      String stationLine = station.getStationLine();
 
       // find previous station in line
       Station adjacentStation = null;
