@@ -11,7 +11,7 @@ import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class DateUtil {
+public final class DateTimeUtil {
   private static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm";
 
   public static DateTime convertStringToDateTime(String dateTime) {

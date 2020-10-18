@@ -52,7 +52,7 @@ public final class StationUtil {
       return true;
     }
 
-    TimePeriod timePeriod = DateUtil.convertDateTimeToTimePeriod(dateTime);
+    TimePeriod timePeriod = DateTimeUtil.convertDateTimeToTimePeriod(dateTime);
 
     // check if station is closed
     if (timePeriod == TimePeriod.NIGHT) {

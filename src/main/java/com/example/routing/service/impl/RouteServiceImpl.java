@@ -4,11 +4,13 @@ import com.example.routing.model.Station;
 import com.example.routing.model.StationNode;
 import com.example.routing.model.exception.RouteNotFoundException;
 import com.example.routing.model.exception.StationNameNotFoundException;
+import com.example.routing.model.result.ShortestRouteResult;
 import com.example.routing.model.result.ShortestRouteWithTimeResult;
 import com.example.routing.model.spec.GetShortestRouteSpec;
 import com.example.routing.model.spec.GetShortestRouteWithTimeSpec;
 import com.example.routing.service.RouteService;
 import com.example.routing.service.StationService;
+import com.example.routing.util.DateTimeUtil;
 import com.example.routing.util.RouteUtil;
 import com.example.routing.util.StationUtil;
 import java.util.ArrayList;
@@ -40,14 +42,17 @@ public class RouteServiceImpl implements RouteService {
   }
 
   @Override
-  public List<Station> getShortestRoute(GetShortestRouteSpec spec) {
+  public ShortestRouteResult getShortestRoute(GetShortestRouteSpec spec) {
     ShortestRouteWithTimeResult result = getShortestRouteWithTime(GetShortestRouteWithTimeSpec.builder()
         .originStationName(spec.getOriginStationName())
         .destinationStationName(spec.getDestinationStationName())
         .departureTimestamp(null)
         .build()
     );
-    return result.getRoute();
+    
+    return ShortestRouteResult.builder()
+        .stations(result.getStations())
+        .build();
   }
 
   @Override
@@ -104,8 +109,9 @@ public class RouteServiceImpl implements RouteService {
         Collections.reverse(route);
         
         return ShortestRouteWithTimeResult.builder()
+            .stations(route)
             .totalTravelTimeInMinutes(travelCost)
-            .route(route)
+            .timePeriod(DateTimeUtil.convertDateTimeToTimePeriod(departureTimestamp))
             .build();
       }
 
