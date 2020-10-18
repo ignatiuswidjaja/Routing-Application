@@ -41,7 +41,11 @@ public class RouteUtil {
   }
 
   private static int calculateNightTravelCost(Station from, Station to) {
-    if (from.getStationLine().equals("TE")) {
+    if (!from.getStationLine().equals(to.getStationLine())) {
+      return 10;
+    }
+
+    if ("TE".equals(from.getStationLine())) {
       return 8;
     }
     return 10;
@@ -124,7 +128,7 @@ public class RouteUtil {
       // update origin station using the current value of destination station
       originStation = destinationStation;
     }
-    
+
     return sb.toString();
   }
 }

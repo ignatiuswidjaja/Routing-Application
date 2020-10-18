@@ -3,8 +3,10 @@ package com.example.routing.util;
 import com.example.routing.model.Station;
 import com.example.routing.model.StationEntity;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -86,5 +88,42 @@ public class TestStationUtil {
     List<Station> convertedStations = StationUtil.convertStationEntities(stationEntities);
     Assert.assertTrue(convertedStations.isEmpty());
 
+  }
+
+  @Test
+  public void testIsOpen_withNullDateTime() {
+    Assert.assertTrue(StationUtil.isOpen(new Station(), null));
+  }
+
+  @Test
+  public void testIsClosed_withNightDateTime() {
+    DateTime dateTime = new DateTime().withTime(new LocalTime(23, 0));
+    Station station = Station.builder()
+        .stationLine("DT")
+        .build();
+    
+    Assert.assertFalse(StationUtil.isOpen(station, dateTime));
+  }
+
+  @Test
+  public void testIsOpen_withNightDateTimeAndAfterOpeningDate() {
+    DateTime dateTime = new DateTime().withTime(new LocalTime(23, 0));
+    Station station = Station.builder()
+        .stationLine("NS")
+        .openingDate(dateTime.minusDays(1))
+        .build();
+
+    Assert.assertTrue(StationUtil.isOpen(station, dateTime));
+  }
+
+  @Test
+  public void testIsOpen_withNightDateTimeAndBeforeOpeningDate() {
+    DateTime dateTime = new DateTime().withTime(new LocalTime(23, 0));
+    Station station = Station.builder()
+        .stationLine("NS")
+        .openingDate(dateTime.plusDays(1))
+        .build();
+
+    Assert.assertFalse(StationUtil.isOpen(station, dateTime));
   }
 }
