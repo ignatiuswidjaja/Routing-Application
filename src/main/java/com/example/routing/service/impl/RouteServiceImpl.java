@@ -15,6 +15,7 @@ import com.example.routing.util.RouteUtil;
 import com.example.routing.util.StationUtil;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +32,16 @@ public class RouteServiceImpl implements RouteService {
 
   private final List<Station> stations;
   private final Map<String, List<Station>> stationNetwork;
+  private final Comparator<StationNode> stationNodeComparator;
 
   public RouteServiceImpl(StationService stationService) {
     this.stationService = stationService;
 
     this.stations = stationService.getAllStations();
     this.stationNetwork = new HashMap<>();
+    this.stationNodeComparator = Comparator
+        .comparingInt(StationNode::getTravelCost)
+        .thenComparingInt(StationNode::getEstimatedCost);
 
     initStations();
   }
@@ -49,7 +54,7 @@ public class RouteServiceImpl implements RouteService {
         .departureTimestamp(null)
         .build()
     );
-    
+
     return ShortestRouteResult.builder()
         .stations(result.getStations())
         .build();
@@ -85,7 +90,7 @@ public class RouteServiceImpl implements RouteService {
     // A* / dijkstra mixed algorithm
     while (!openList.isEmpty()) {
       // sort, retrieve and remove the first node
-      openList.sort(StationNode::compareTo);
+      openList.sort(stationNodeComparator);
       StationNode node = openList.get(0);
       openList.remove(0);
       Station currentStation = node.getCurrent();
@@ -107,7 +112,7 @@ public class RouteServiceImpl implements RouteService {
 
         // reverse the route
         Collections.reverse(route);
-        
+
         return ShortestRouteWithTimeResult.builder()
             .stations(route)
             .totalTravelTimeInMinutes(travelCost)

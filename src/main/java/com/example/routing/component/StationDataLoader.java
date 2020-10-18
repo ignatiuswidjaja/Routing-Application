@@ -30,13 +30,13 @@ public class StationDataLoader {
       CsvMapper mapper = new CsvMapper();
       mapper.registerModule(new JodaModule());
       mapper.setDateFormat(new SimpleDateFormat("d MMMM yyyy"));
-      
+
       CsvSchema schema = CsvSchema.emptySchema().withHeader();
 
       File file = new ClassPathResource(fileName).getFile();
       MappingIterator<Station> iterator = mapper.readerFor(Station.class).with(schema).readValues(file);
       log.info("Loading station data from file to database...");
-      while(iterator.hasNext()) {
+      while (iterator.hasNext()) {
         Station station = iterator.next();
         station = station.toBuilder()
             .stationLine(station.getStationCode().replaceAll("[0-9]", ""))

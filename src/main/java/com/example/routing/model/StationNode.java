@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class StationNode implements Comparable<StationNode> {
+public class StationNode {
   private Station current;
   private Station previous;
   private int travelCost;
@@ -41,14 +41,5 @@ public class StationNode implements Comparable<StationNode> {
   @Override
   public int hashCode() {
     return Objects.hash(current, previous, travelCost, estimatedCost);
-  }
-
-  @Override
-  public int compareTo(StationNode stationNode) {
-    int travelCostDiff = Integer.compare(this.travelCost, stationNode.travelCost);
-    if (travelCostDiff != 0) {
-      return travelCostDiff;
-    }
-    return Integer.compare(this.estimatedCost, stationNode.estimatedCost);
   }
 }
