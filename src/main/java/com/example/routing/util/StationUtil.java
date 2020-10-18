@@ -30,7 +30,7 @@ public final class StationUtil {
     return Station.builder()
         .stationCode(stationEntity.getStationCode())
         .stationName(stationEntity.getStationName())
-        .openingDate(new DateTime(stationEntity.getOpeningDate()))
+        .openingDate(new DateTime(stationEntity.getOpeningTimestamp()))
         .stationLine(stationEntity.getStationLine())
         .stationNumber(stationEntity.getStationNumber())
         .build();
@@ -40,7 +40,7 @@ public final class StationUtil {
     return StationEntity.builder()
         .stationCode(station.getStationCode())
         .stationName(station.getStationName())
-        .openingDate(station.getOpeningDate().getMillis())
+        .openingTimestamp(station.getOpeningDate().getMillis())
         .stationLine(station.getStationLine())
         .stationNumber(station.getStationNumber())
         .build();

@@ -38,7 +38,7 @@ public class TestStationUtil {
       StationEntity stationEntity = stationEntities.get(i);
       Assert.assertEquals(station.getStationCode(), stationEntity.getStationCode());
       Assert.assertEquals(station.getStationName(), stationEntity.getStationName());
-      Assert.assertEquals(station.getOpeningDate().getMillis(), stationEntity.getOpeningDate());
+      Assert.assertEquals(station.getOpeningDate().getMillis(), stationEntity.getOpeningTimestamp());
       Assert.assertEquals(station.getStationLine(), stationEntity.getStationLine());
       Assert.assertEquals(station.getStationNumber(), stationEntity.getStationNumber());
     }
@@ -51,14 +51,14 @@ public class TestStationUtil {
     stationEntities.add(StationEntity.builder()
         .stationCode("A1")
         .stationName("ASD")
-        .openingDate(dateTime.getMillis())
+        .openingTimestamp(dateTime.getMillis())
         .stationLine("A")
         .stationNumber(123)
         .build());
     stationEntities.add(StationEntity.builder()
         .stationCode("A2")
         .stationName("ASDF")
-        .openingDate(dateTime.getMillis())
+        .openingTimestamp(dateTime.getMillis())
         .stationLine("B")
         .stationNumber(1234)
         .build());
@@ -70,7 +70,7 @@ public class TestStationUtil {
       Station station = stations.get(i);
       Assert.assertEquals(stationEntity.getStationCode(), station.getStationCode());
       Assert.assertEquals(stationEntity.getStationName(), station.getStationName());
-      Assert.assertEquals(stationEntity.getOpeningDate(), station.getOpeningDate().getMillis());
+      Assert.assertEquals(stationEntity.getOpeningTimestamp(), station.getOpeningDate().getMillis());
       Assert.assertEquals(stationEntity.getStationLine(), station.getStationLine());
       Assert.assertEquals(stationEntity.getStationNumber(), station.getStationNumber());
     }

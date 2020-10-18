@@ -21,7 +21,7 @@ public class StationEntity {
   private String stationName;
 
   @Column(nullable = false)
-  private long openingDate;
+  private long openingTimestamp;
 
   @Column(nullable = false)
   private String stationLine;

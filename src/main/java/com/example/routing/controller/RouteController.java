@@ -1,7 +1,13 @@
 package com.example.routing.controller;
 
+import com.example.routing.model.Station;
+import com.example.routing.model.StationEntity;
+import com.example.routing.model.exception.StationCodeNotFoundException;
+import com.example.routing.model.request.GetShortestRouteSpec;
 import com.example.routing.repository.StationRepository;
+import com.example.routing.service.RouteService;
 import com.example.routing.util.DateUtil;
+import com.example.routing.util.StationUtil;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -16,11 +22,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/route")
 public class RouteController {
   private final StationRepository stationRepository;
+  private final RouteService routeService;
 
   @GetMapping()
   public List<String> getShortestRoute(@RequestParam(name = "orig") String originStationName,
                                        @RequestParam(name = "dest") String destinationStationName) {
-    return new ArrayList<>();
+    // validate input
+    GetShortestRouteSpec spec = GetShortestRouteSpec.builder()
+//        .origin(getStationsIfExist(originStationName))
+//        .destination(getStationsIfExist(destinationStationName))
+        .build();
+
+    return routeService.getShortestRoute(spec);
   }
 
   @GetMapping("/time")
@@ -30,5 +43,15 @@ public class RouteController {
     DateTime dateTime = DateUtil.convertStringToDateTime(dateTimeString);
 
     return new ArrayList<>();
+  }
+
+  private List<Station> getStationsIfExist(String stationName) {
+    List<StationEntity> stationEntities = stationRepository.findByStationName(stationName);
+
+    if(!stationEntities.isEmpty()) {
+      return StationUtil.convertStationEntities(stationEntities);
+    } else {
+      throw new StationCodeNotFoundException(stationName);
+    }
   }
 }

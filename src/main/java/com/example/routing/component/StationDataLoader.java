@@ -1,8 +1,7 @@
 package com.example.routing.component;
 
 import com.example.routing.model.Station;
-import com.example.routing.repository.StationRepository;
-import com.example.routing.util.StationUtil;
+import com.example.routing.service.StationService;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Component
 public class StationDataLoader {
-  private final StationRepository stationRepository;
+  private final StationService stationService;
 
   @PostConstruct
   private void setUpData() {
@@ -43,7 +42,7 @@ public class StationDataLoader {
             .stationLine(station.getStationCode().replaceAll("[0-9]", ""))
             .stationNumber(Integer.parseInt(station.getStationCode().replaceAll("[A-Z]", "")))
             .build();
-        stationRepository.save(StationUtil.convertStation(station));
+        stationService.addStation(station);
       }
       log.info("Loading station data finished");
     } catch (Exception e) {
