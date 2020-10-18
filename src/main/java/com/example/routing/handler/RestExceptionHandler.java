@@ -1,7 +1,6 @@
 package com.example.routing.handler;
 
 import com.example.routing.model.exception.BaseNotFoundException;
-import com.example.routing.model.exception.StationCodeNotFoundException;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
