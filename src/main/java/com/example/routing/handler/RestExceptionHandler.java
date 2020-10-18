@@ -23,11 +23,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     );
   }
 
-  @ExceptionHandler({ConversionFailedException.class, IllegalArgumentException.class})
+  @ExceptionHandler({ConversionFailedException.class})
   public ResponseEntity<Object> handleBadRequest(Exception exception, WebRequest request) {
     return handleExceptionInternal(
         exception,
-        exception.getMessage(),
+        exception.getLocalizedMessage().split(";")[0],
         new HttpHeaders(),
         HttpStatus.BAD_REQUEST,
         request
