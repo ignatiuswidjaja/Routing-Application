@@ -5,7 +5,8 @@ import java.util.List;
 
 public interface StationService {
   void addStation(Station station);
-  List<Station> getAllStations();
   Station getStationByStationCode(String stationCode);
+  Station getStationByStationLineAndStationNumber(String stationLine, int stationNumber);
+  List<Station> getAllStations();
   List<Station> getStationsByStationName(String stationName);
 }

@@ -2,7 +2,6 @@ package com.example.routing.service.impl;
 
 import com.example.routing.model.Station;
 import com.example.routing.model.StationEntity;
-import com.example.routing.model.exception.StationCodeNotFoundException;
 import com.example.routing.repository.StationRepository;
 import com.example.routing.service.StationService;
 import com.example.routing.util.StationUtil;
@@ -21,17 +20,25 @@ public class StationServiceImpl implements StationService {
   }
 
   @Override
-  public List<Station> getAllStations() {
-    return StationUtil.convertStationEntities(stationRepository.findAll());
+  public Station getStationByStationCode(String stationCode) {
+    return stationRepository.findById(stationCode)
+        .map(StationUtil::convertStationEntity)
+        .orElse(null);
   }
 
   @Override
-  public Station getStationByStationCode(String stationCode) {
-    StationEntity stationEntity = stationRepository
-        .findById(stationCode)
-        .orElseThrow(() -> new StationCodeNotFoundException(stationCode));
-    
+  public Station getStationByStationLineAndStationNumber(String stationLine, int stationNumber) {
+    StationEntity stationEntity = stationRepository.findByStationLineAndStationNumber(stationLine, stationNumber);
+    if (stationEntity == null) {
+      return null;
+    }
+
     return StationUtil.convertStationEntity(stationEntity);
+  }
+
+  @Override
+  public List<Station> getAllStations() {
+    return StationUtil.convertStationEntities(stationRepository.findAll());
   }
 
   @Override

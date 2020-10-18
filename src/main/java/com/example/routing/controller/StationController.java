@@ -1,6 +1,7 @@
 package com.example.routing.controller;
 
 import com.example.routing.model.Station;
+import com.example.routing.model.exception.StationCodeNotFoundException;
 import com.example.routing.service.StationService;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,10 @@ public class StationController {
 
   @GetMapping("/{stationCode}")
   public Station getStationByStationCode(@PathVariable String stationCode) {
+    Station station = stationService.getStationByStationCode(stationCode);
+    if (station == null) {
+      throw new StationCodeNotFoundException(stationCode);
+    }
     return stationService.getStationByStationCode(stationCode);
   }
 

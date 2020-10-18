@@ -4,6 +4,7 @@ import com.example.routing.model.Station;
 import com.example.routing.model.StationEntity;
 import com.example.routing.model.exception.StationCodeNotFoundException;
 import com.example.routing.model.request.GetShortestRouteSpec;
+import com.example.routing.model.request.GetShortestRouteWithTimeSpec;
 import com.example.routing.repository.StationRepository;
 import com.example.routing.service.RouteService;
 import com.example.routing.util.DateUtil;
@@ -27,10 +28,9 @@ public class RouteController {
   @GetMapping()
   public List<String> getShortestRoute(@RequestParam(name = "orig") String originStationName,
                                        @RequestParam(name = "dest") String destinationStationName) {
-    // validate input
     GetShortestRouteSpec spec = GetShortestRouteSpec.builder()
-//        .origin(getStationsIfExist(originStationName))
-//        .destination(getStationsIfExist(destinationStationName))
+        .originStationName(originStationName)
+        .destinationStationName(destinationStationName)
         .build();
 
     return routeService.getShortestRoute(spec);
@@ -42,16 +42,12 @@ public class RouteController {
                                                @RequestParam(name = "time") String dateTimeString) throws Exception {
     DateTime dateTime = DateUtil.convertStringToDateTime(dateTimeString);
 
-    return new ArrayList<>();
-  }
+    GetShortestRouteWithTimeSpec spec = GetShortestRouteWithTimeSpec.builder()
+        .originStationName(originStationName)
+        .destinationStationName(destinationStationName)
+        .departureDate(dateTime)
+        .build();
 
-  private List<Station> getStationsIfExist(String stationName) {
-    List<StationEntity> stationEntities = stationRepository.findByStationName(stationName);
-
-    if(!stationEntities.isEmpty()) {
-      return StationUtil.convertStationEntities(stationEntities);
-    } else {
-      throw new StationCodeNotFoundException(stationName);
-    }
+    return routeService.getShortestRouteWithTime(spec);
   }
 }

@@ -1,7 +1,6 @@
 package com.example.routing.handler;
 
 import com.example.routing.model.exception.StationCodeNotFoundException;
-import com.example.routing.model.exception.StationNameNotFoundException;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,7 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
-  @ExceptionHandler({StationCodeNotFoundException.class, StationNameNotFoundException.class})
+  @ExceptionHandler({StationCodeNotFoundException.class})
   protected ResponseEntity<Object> handleNotFound(Exception exception, WebRequest request) {
     return handleExceptionInternal(
         exception,

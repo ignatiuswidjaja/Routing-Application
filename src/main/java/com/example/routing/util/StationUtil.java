@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StationUtil {
+  
   public static List<Station> convertStationEntities(List<StationEntity> stationEntities) {
     List<Station> stations = new ArrayList<>();
     for(StationEntity stationEntity : stationEntities) {
