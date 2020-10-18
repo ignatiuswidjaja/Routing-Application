@@ -48,6 +48,10 @@ public final class StationUtil {
   }
 
   public static boolean isOpen(Station station, DateTime dateTime) {
+    if (dateTime == null) {
+      return true;
+    }
+
     TimePeriod timePeriod = DateUtil.convertDateTimeToTimePeriod(dateTime);
 
     // check if station is closed

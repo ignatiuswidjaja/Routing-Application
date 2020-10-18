@@ -37,7 +37,7 @@ public class RouteUtil {
   }
 
   private static int calculateNightTravelCost(Station from, Station to) {
-    if(from.getStationLine().equals("TE")) {
+    if (from.getStationLine().equals("TE")) {
       return 8;
     }
     return 10;
@@ -54,6 +54,15 @@ public class RouteUtil {
         return 8;
       default:
         return 10;
+    }
+  }
+
+  public static int calculateEstimatedCost(Station from, Station to) {
+    // if it's stations is in a different line, we can't determine the heuristic value
+    if (!from.getStationLine().equals(to.getStationLine())) {
+      return Integer.MAX_VALUE;
+    } else {
+      return Math.abs(from.getStationNumber() - to.getStationNumber());
     }
   }
 }

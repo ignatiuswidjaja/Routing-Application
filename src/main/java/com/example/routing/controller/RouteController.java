@@ -1,15 +1,12 @@
 package com.example.routing.controller;
 
 import com.example.routing.model.Station;
-import com.example.routing.model.StationEntity;
-import com.example.routing.model.exception.StationCodeNotFoundException;
-import com.example.routing.model.request.GetShortestRouteSpec;
-import com.example.routing.model.request.GetShortestRouteWithTimeSpec;
+import com.example.routing.model.result.ShortestRouteWithTimeResult;
+import com.example.routing.model.spec.GetShortestRouteSpec;
+import com.example.routing.model.spec.GetShortestRouteWithTimeSpec;
 import com.example.routing.repository.StationRepository;
 import com.example.routing.service.RouteService;
 import com.example.routing.util.DateUtil;
-import com.example.routing.util.StationUtil;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.joda.time.DateTime;
@@ -33,23 +30,23 @@ public class RouteController {
         .destinationStationName(destinationStationName)
         .build();
 
+    List<Station> stations = routeService.getShortestRoute(spec);
     return null;
-//    return routeService.getShortestRoute(spec);
   }
 
   @GetMapping("/time")
   public List<String> getShortestRouteWithTime(@RequestParam(name = "orig") String originStationName,
                                                @RequestParam(name = "dest") String destinationStationName,
-                                               @RequestParam(name = "time") String dateTimeString) throws Exception {
-    DateTime dateTime = DateUtil.convertStringToDateTime(dateTimeString);
+                                               @RequestParam(name = "time") String departureTimestampString) throws Exception {
+    DateTime departureTimestamp = DateUtil.convertStringToDateTime(departureTimestampString);
 
     GetShortestRouteWithTimeSpec spec = GetShortestRouteWithTimeSpec.builder()
         .originStationName(originStationName)
         .destinationStationName(destinationStationName)
-        .departureDate(dateTime)
+        .departureTimestamp(departureTimestamp)
         .build();
 
+    ShortestRouteWithTimeResult result = routeService.getShortestRouteWithTime(spec);
     return null;
-//    return routeService.getShortestRouteWithTime(spec);
   }
 }

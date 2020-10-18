@@ -1,17 +1,15 @@
-package com.example.routing.model.request;
+package com.example.routing.model.spec;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.joda.time.DateTime;
 
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Builder(builderClassName = "Builder")
 @Getter
-public class GetShortestRouteWithTimeSpec {
+public class GetShortestRouteSpec {
   private final String originStationName;
   private final String destinationStationName;
-  private final DateTime departureDate;
 }

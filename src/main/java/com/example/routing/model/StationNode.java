@@ -1,27 +1,21 @@
 package com.example.routing.model;
 
-import lombok.EqualsAndHashCode;
+import java.util.Objects;
 import lombok.Getter;
+import lombok.Setter;
 
+@Setter
 @Getter
-@EqualsAndHashCode
 public class StationNode implements Comparable<StationNode> {
-  private final Station current;
-  private final Station previous;
-  private final int travelCost;
-  private final int estimatedCost;
+  private Station current;
+  private Station previous;
+  private int travelCost;
+  private int estimatedCost;
 
   public StationNode(Station current) {
     this.current = current;
     this.previous = null;
-    this.travelCost = Integer.MAX_VALUE;
-    this.estimatedCost = Integer.MAX_VALUE;
-  }
-
-  public StationNode(Station current, Station previous, int travelCost) {
-    this.current = current;
-    this.previous = previous;
-    this.travelCost = travelCost;
+    this.travelCost = 0;
     this.estimatedCost = Integer.MAX_VALUE;
   }
 
@@ -33,7 +27,28 @@ public class StationNode implements Comparable<StationNode> {
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof StationNode)) {
+      return false;
+    }
+    StationNode that = (StationNode) o;
+    return this.current.getStationCode().equals(that.current.getStationCode());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(current, previous, travelCost, estimatedCost);
+  }
+
+  @Override
   public int compareTo(StationNode stationNode) {
+    int travelCostDiff = Integer.compare(this.travelCost, stationNode.travelCost);
+    if (travelCostDiff != 0) {
+      return travelCostDiff;
+    }
     return Integer.compare(this.estimatedCost, stationNode.estimatedCost);
   }
 }

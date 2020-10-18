@@ -4,17 +4,21 @@ import com.example.routing.model.Station;
 import com.example.routing.model.StationNode;
 import com.example.routing.model.exception.RouteNotFoundException;
 import com.example.routing.model.exception.StationNameNotFoundException;
-import com.example.routing.model.request.GetShortestRouteSpec;
-import com.example.routing.model.request.GetShortestRouteWithTimeSpec;
+import com.example.routing.model.result.ShortestRouteWithTimeResult;
+import com.example.routing.model.spec.GetShortestRouteSpec;
+import com.example.routing.model.spec.GetShortestRouteWithTimeSpec;
 import com.example.routing.service.RouteService;
 import com.example.routing.service.StationService;
+import com.example.routing.util.RouteUtil;
+import com.example.routing.util.StationUtil;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,8 +41,20 @@ public class RouteServiceImpl implements RouteService {
 
   @Override
   public List<Station> getShortestRoute(GetShortestRouteSpec spec) {
+    ShortestRouteWithTimeResult result = getShortestRouteWithTime(GetShortestRouteWithTimeSpec.builder()
+        .originStationName(spec.getOriginStationName())
+        .destinationStationName(spec.getDestinationStationName())
+        .departureTimestamp(null)
+        .build()
+    );
+    return result.getRoute();
+  }
+
+  @Override
+  public ShortestRouteWithTimeResult getShortestRouteWithTime(GetShortestRouteWithTimeSpec spec) {
     final String originStationName = spec.getOriginStationName();
     final String destinationStationName = spec.getDestinationStationName();
+    final DateTime departureTimestamp = spec.getDepartureTimestamp();
 
     // get origin and destination stations
     List<Station> originStations = stationService.getStationsByStationName(originStationName);
@@ -52,51 +68,94 @@ public class RouteServiceImpl implements RouteService {
     }
 
     // init variable
-    Queue<StationNode> openSet = new PriorityQueue<>();
-    Map<String, StationNode> allNodes = new HashMap<>();
+    List<StationNode> openList = new ArrayList<>();
+    Map<String, StationNode> closedMap = new HashMap<>();
 
     // put origin stations to open set
     for (Station station : originStations) {
-      openSet.add(new StationNode(station));
+      StationNode stationNode = new StationNode(station);
+      openList.add(stationNode);
     }
 
-    // A* algorithm
-    while (!openSet.isEmpty()) {
-      // retrieve node from queue
-      StationNode node = openSet.poll();
-      Station current = node.getCurrent();
+    // A* / dijkstra mixed algorithm
+    while (!openList.isEmpty()) {
+      // sort, retrieve and remove the first node
+      openList.sort(StationNode::compareTo);
+      StationNode node = openList.get(0);
+      openList.remove(0);
+      Station currentStation = node.getCurrent();
+
+      // add current node to the closed map
+      closedMap.put(currentStation.getStationCode(), node);
 
       // check if we arrive at destination
-      if (current.getStationName().equals(destinationStationName)) {
+      if (currentStation.getStationName().equals(destinationStationName)) {
+        // get travel cost
+        int travelCost = node.getTravelCost();
+
         // trace back the route
         List<Station> route = new ArrayList<>();
         while (node != null) {
           route.add(node.getCurrent());
-          node = allNodes.get(node.getPrevious().getStationName());
+          node = node.getPrevious() == null ? null : closedMap.get(node.getPrevious().getStationCode());
         }
-        return route;
+
+        // reverse the route
+        Collections.reverse(route);
+        
+        return ShortestRouteWithTimeResult.builder()
+            .totalTravelTimeInMinutes(travelCost)
+            .route(route)
+            .build();
       }
 
-      // get adjacent stations
-      List<Station> adjacentStations = stationNetwork.get(node.getCurrent());
+      // loop through each adjacent stations
+      List<Station> adjacentStations = stationNetwork.get(currentStation.getStationCode());
       for (Station adjacentStation : adjacentStations) {
-        // check if it's already found
+        // check if station is closed or it's already in the closed map, ignore it
+        if (!StationUtil.isOpen(adjacentStation, departureTimestamp)
+            || closedMap.get(adjacentStation.getStationCode()) != null) {
+          continue;
+        }
 
-        // if it's on a different line
-        int pathScore = 2;
+        // calculate travel cost
+        int accumulativeTravelCost = node.getTravelCost() + RouteUtil.calculateTravelCost(
+            currentStation,
+            adjacentStation,
+            departureTimestamp
+        );
 
+        // check if adjacent node is in the open list
+        Optional<StationNode> optionalAdjacentNode = openList.stream()
+            .filter(stationNode -> stationNode.getCurrent().getStationName().equals(adjacentStation.getStationName()))
+            .findFirst();
+        StationNode adjacentNode;
 
-//        openSet.add(new StationNode(adjacentStation, node, 2));
+        // if adjacent node is in the open list
+        if (optionalAdjacentNode.isPresent()) {
+          // retrieve adjacent node
+          adjacentNode = optionalAdjacentNode.get();
+
+          // if the new travel cost is lower, update the value
+          if (accumulativeTravelCost < adjacentNode.getTravelCost()) {
+            adjacentNode.setPrevious(currentStation);
+            adjacentNode.setTravelCost(accumulativeTravelCost);
+          }
+        } else {
+          // if it's a new adjacent node, calculate estimated cost
+          int estimatedCost = Integer.MAX_VALUE;
+          for (Station destinationStation : destinationStations) {
+            estimatedCost = Math.min(estimatedCost, RouteUtil.calculateEstimatedCost(adjacentStation, destinationStation));
+          }
+          adjacentNode = new StationNode(adjacentStation, currentStation, accumulativeTravelCost, estimatedCost);
+
+          // register adjacent node in the open list
+          openList.add(adjacentNode);
+        }
       }
-
     }
 
     throw new RouteNotFoundException(originStationName, destinationStationName);
-  }
-
-  @Override
-  public List<Station> getShortestRouteWithTime(GetShortestRouteWithTimeSpec spec) {
-    return null;
   }
 
   //===================
@@ -135,7 +194,7 @@ public class RouteServiceImpl implements RouteService {
       }
 
       // register in connected stations
-      stationNetwork.put(station.getStationName(), adjacentStations);
+      stationNetwork.put(station.getStationCode(), adjacentStations);
     }
   }
 }
