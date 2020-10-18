@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StationController {
   private final StationService stationService;
 
-  @GetMapping
+  @GetMapping()
   public List<Station> getAllStations() {
     return stationService.getAllStations();
   }
