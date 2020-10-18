@@ -1,5 +1,5 @@
 # Routing Application
-Routing Application using Spring
+Routing Application using Spring Boot
                 
 ## Contents
 * [Requirement](#requirement)
