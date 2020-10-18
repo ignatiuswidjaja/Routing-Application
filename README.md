@@ -1,5 +1,5 @@
-# Routing Application Project
-Exercise project for Routing Application using Spring
+# Routing Application
+Routing Application using Spring
                 
 ## Contents
 * [Requirement](#requirement)
