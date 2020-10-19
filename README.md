@@ -37,6 +37,7 @@ sudo apt install curl
 
 ## Maven wrapper
 Maven wrapper is provided in the project to simplify the need of having maven pre-installed in your OS. 
+
 For Unix system, simply run `mvnw` in the root folder
 ``` 
 ./mvnw build
